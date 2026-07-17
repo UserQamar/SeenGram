@@ -4,9 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       instagram_url:
-        description: "Direct URL to decrypted Instagram IPA"
-        required: true
-        type: string
+       description: "Decrypted Instagram IPA Link"
+       required: false
+       default: "https://www.mediafire.com/file/cdskpootmye2ye1/Instagram.ipa/file"
+       type: string
 
 jobs:
   build:
@@ -46,7 +47,7 @@ jobs:
         mkdir -p packages
 
         curl -L \
-        "https://www.mediafire.com/file/cdskpootmye2ye1/Instagram.ipa/file" \
+        "${{ inputs.instagram_url }}" \
         -o packages/com.burbn.instagram.ipa
 
     - name: Build RyukGram

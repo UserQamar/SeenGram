@@ -235,22 +235,28 @@ BOOL dmVisualMsgsViewedButtonEnabled = false;
 
 %hook IGDSLauncherConfig
 - (_Bool)isLiquidGlassInAppNotificationEnabled {
-    return [SCIUtils liquidGlassEnabledBool:%orig];
+    BOOL result = %orig;
+    return [SCIUtils liquidGlassEnabledBool:result];
 }
 - (_Bool)isLiquidGlassContextMenuEnabled {
-    return [SCIUtils liquidGlassEnabledBool:%orig];
+    BOOL result = %orig;
+    return [SCIUtils liquidGlassEnabledBool:result];
 }
 - (_Bool)isLiquidGlassToastEnabled {
-    return [SCIUtils liquidGlassEnabledBool:%orig];
+    BOOL result = %orig;
+    return [SCIUtils liquidGlassEnabledBool:result];
 }
 - (_Bool)isLiquidGlassToastPeekEnabled {
-    return [SCIUtils liquidGlassEnabledBool:%orig];
+    BOOL result = %orig;
+    return [SCIUtils liquidGlassEnabledBool:result];
 }
 - (_Bool)isLiquidGlassAlertDialogEnabled {
-    return [SCIUtils liquidGlassEnabledBool:%orig];
+    BOOL result = %orig;
+    return [SCIUtils liquidGlassEnabledBool:result];
 }
 - (_Bool)isLiquidGlassIconBarButtonEnabled {
-    return [SCIUtils liquidGlassEnabledBool:%orig];
+    BOOL result = %orig;
+    return [SCIUtils liquidGlassEnabledBool:result];
 }
 %end
 
@@ -276,7 +282,7 @@ shouldPersistLastBugReportId:(id)arg6
 
 // Disable anti-screenshot feature on visual messages
 %hook IGStoryViewerContainerView
-- (void)setShouldBlockScreenshot:(BOOL)arg1 viewModel:(id)arg2 { VOID_HANDLESCREENSHOT(%orig); }
+- (void)setShouldBlockScreenshot:(BOOL)arg1 viewModel:(id)arg2 { %orig; }
 %end
 
 // Disable screenshot logging/detection

@@ -282,29 +282,35 @@ shouldPersistLastBugReportId:(id)arg6
 
 // Disable anti-screenshot feature on visual messages
 %hook IGStoryViewerContainerView
-- (void)setShouldBlockScreenshot:(BOOL)arg1 viewModel:(id)arg2 { %orig; }
+- (void)setShouldBlockScreenshot:(BOOL)arg1 viewModel:(id)arg2 {
+    %orig;
+}
 %end
 
 // Disable screenshot logging/detection
 %hook IGDirectVisualMessageViewerSession
-- (id)visualMessageViewerController:(id)arg1 didDetectScreenshotForVisualMessage:(id)arg2 atIndex:(NSInteger)arg3 { NONVOID_HANDLESCREENSHOT(%orig); }
+- (id)visualMessageViewerController:(id)arg1 didDetectScreenshotForVisualMessage:(id)arg2 atIndex:(NSInteger)arg3 {
+    if ([SCIUtils getBoolPref:@"remove_screenshot_alert"]) {
+        return nil;
+    }
+    return %orig;
+}
 %end
 
 %hook IGDirectVisualMessageReplayService
-- (id)visualMessageViewerController:(id)arg1 didDetectScreenshotForVisualMessage:(id)arg2 atIndex:(NSInteger)arg3 { NONVOID_HANDLESCREENSHOT(%orig); }
+- (id)visualMessageViewerController:(id)arg1 didDetectScreenshotForVisualMessage:(id)arg2 atIndex:(NSInteger)arg3 {
+    if ([SCIUtils getBoolPref:@"remove_screenshot_alert"]) {
+        return nil;
+    }
+    return %orig;
+}
 %end
 
 %hook IGDirectVisualMessageReportService
-- (id)visualMessageViewerController:(id)arg1 didDetectScreenshotForVisualMessage:(id)arg2 atIndex:(NSInteger)arg3 { NONVOID_HANDLESCREENSHOT(%orig); }
-%end
-
-%hook IGDirectVisualMessageScreenshotSafetyLogger
-- (id)initWithUserSession:(id)arg1 entryPoint:(NSInteger)arg2 {
+- (id)visualMessageViewerController:(id)arg1 didDetectScreenshotForVisualMessage:(id)arg2 atIndex:(NSInteger)arg3 {
     if ([SCIUtils getBoolPref:@"remove_screenshot_alert"]) {
-        NSLog(@"[SCInsta] Disable visual message screenshot safety logger");
         return nil;
     }
-
     return %orig;
 }
 %end

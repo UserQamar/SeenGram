@@ -1,35 +1,23 @@
 #import "../../Utils.h"
 #import "../../InstagramHeaders.h"
-#import <substrate.h>
 
-////////////////////////////////////////////////////////
-
-// Follow button on profile page
 %hook IGFollowController
 
 - (void)_didPressFollowButton {
-
     NSInteger status = self.user.followStatus;
 
     if (status == 2 && [SCIUtils getBoolPref:@"follow_confirm"]) {
-
         NSLog(@"[SCInsta] Confirm follow triggered");
 
         [SCIUtils showConfirmation:^{
             %orig;
         }];
-
     } else {
-
         %orig;
-
     }
 }
 
-
-// Unfollow from profile action sheet
 - (void)_performUnfollow {
-
     if ([SCIUtils getBoolPref:@"unfollow_confirm"]) {
 
         [SCIUtils showConfirmation:^{
@@ -37,30 +25,23 @@
         } title:SCILocalized(@"Unfollow?")];
 
     } else {
-
         %orig;
-
     }
 }
 
 %end
 
 
-// Follow button on discover people page
 %hook IGDiscoverPeopleButtonGroupView
 
 - (void)_onFollowButtonTapped:(id)arg1 {
 
     if ([SCIUtils getBoolPref:@"follow_confirm"]) {
-
         [SCIUtils showConfirmation:^{
             %orig;
         }];
-
     } else {
-
         %orig;
-
     }
 }
 
@@ -68,36 +49,27 @@
 - (void)_onFollowingButtonTapped:(id)arg1 {
 
     if ([SCIUtils getBoolPref:@"follow_confirm"]) {
-
         [SCIUtils showConfirmation:^{
             %orig;
         }];
-
     } else {
-
         %orig;
-
     }
 }
 
 %end
 
 
-// Suggested for you
 %hook IGHScrollAYMFCell
 
 - (void)_didTapAYMFActionButton {
 
     if ([SCIUtils getBoolPref:@"follow_confirm"]) {
-
         [SCIUtils showConfirmation:^{
             %orig;
         }];
-
     } else {
-
         %orig;
-
     }
 }
 
@@ -109,85 +81,64 @@
 - (void)_didTapTextActionButton {
 
     if ([SCIUtils getBoolPref:@"follow_confirm"]) {
-
         [SCIUtils showConfirmation:^{
             %orig;
         }];
-
     } else {
-
         %orig;
-
     }
 }
 
 %end
 
 
-// Reels follow button
 %hook IGUnifiedVideoFollowButton
 
 - (void)_hackilyHandleOurOwnButtonTaps:(id)arg1 event:(id)arg2 {
 
     if ([SCIUtils getBoolPref:@"follow_confirm"]) {
-
         [SCIUtils showConfirmation:^{
             %orig;
         }];
-
     } else {
-
         %orig;
-
     }
 }
 
 %end
 
 
-// Profile top bar follow
 %hook IGProfileViewController
 
 - (void)navigationItemsControllerDidTapHeaderFollowButton:(id)arg1 {
 
     if ([SCIUtils getBoolPref:@"follow_confirm"]) {
-
         [SCIUtils showConfirmation:^{
             %orig;
         }];
-
     } else {
-
         %orig;
-
     }
 }
 
 %end
 
 
-// Story suggested friends
 %hook IGStorySectionController
 
 - (void)followButtonTapped:(id)arg1 cell:(id)arg2 {
 
     if ([SCIUtils getBoolPref:@"follow_confirm"]) {
-
         [SCIUtils showConfirmation:^{
             %orig;
         }];
-
     } else {
-
         %orig;
-
     }
 }
 
 %end
 
-
-// Follow all button in group chats
 
 static void (*orig_listSectionController)(id, SEL, id, id);
 
@@ -208,10 +159,13 @@ static void hooked_listSectionController(id self, SEL _cmd, id arg1, id arg2) {
 
 %ctor {
 
-    Class cls = objc_getClass("IGDirectDetailMembersKit.IGDirectThreadDetailsMembersListViewController");
+    Class cls = objc_getClass(
+        "IGDirectDetailMembersKit.IGDirectThreadDetailsMembersListViewController"
+    );
 
     if (!cls)
         return;
+
 
     MSHookMessageEx(
         cls,

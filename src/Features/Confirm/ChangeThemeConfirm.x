@@ -9,11 +9,9 @@
 
         NSLog(@"[SCInsta] Confirm change direct theme triggered");
 
-        void (^confirmBlock)(void) = ^{
+        [SCIUtils showConfirmation:^{
             %orig;
-        };
-
-        [SCIUtils showConfirmation:confirmBlock];
+        }];
 
     } else {
 
@@ -29,11 +27,9 @@
 
         NSLog(@"[SCInsta] Confirm change direct theme triggered");
 
-        void (^confirmBlock)(void) = ^{
+        [SCIUtils showConfirmation:^{
             %orig;
-        };
-
-        [SCIUtils showConfirmation:confirmBlock];
+        }];
 
     } else {
 
@@ -53,11 +49,9 @@
 
         NSLog(@"[SCInsta] Confirm change direct theme triggered");
 
-        void (^confirmBlock)(void) = ^{
+        [SCIUtils showConfirmation:^{
             %orig;
-        };
-
-        [SCIUtils showConfirmation:confirmBlock];
+        }];
 
     } else {
 

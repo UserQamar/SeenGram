@@ -9,7 +9,21 @@ typedef void (*SciHandleTapCompFn)(Class, SEL, id, id, BOOL, id);
 static SciHandleTapFn orig_sciHandleTap = NULL;
 static SciHandleTapCompFn orig_sciHandleTapComp = NULL;
 
+
+static void sciConfirmAction(BOOL enabled, void (^action)(void)) {
+    if (enabled) {
+        [SCIUtils showConfirmation:^{
+            action();
+        }];
+    } else {
+        action();
+    }
+}
+
+
+
 static void new_sciHandleTap(Class cls, SEL _cmd, id ctx, id btn, BOOL anim) {
+
     if (![SCIUtils getBoolPref:@"like_confirm_reels"]) {
         orig_sciHandleTap(cls, _cmd, ctx, btn, anim);
         return;
@@ -26,7 +40,10 @@ static void new_sciHandleTap(Class cls, SEL _cmd, id ctx, id btn, BOOL anim) {
     }];
 }
 
+
+
 static void new_sciHandleTapComp(Class cls, SEL _cmd, id ctx, id btn, BOOL anim, id comp) {
+
     if (![SCIUtils getBoolPref:@"like_confirm_reels"]) {
         orig_sciHandleTapComp(cls, _cmd, ctx, btn, anim, comp);
         return;
@@ -43,6 +60,8 @@ static void new_sciHandleTapComp(Class cls, SEL _cmd, id ctx, id btn, BOOL anim,
         @catch (__unused id e) {}
     }];
 }
+
+
 
 __attribute__((constructor))
 static void _sciHookReelsLikeHandler(void) {
@@ -67,35 +86,20 @@ static void _sciHookReelsLikeHandler(void) {
 }
 
 
-#define CONFIRMPOSTLIKE(orig) \
-do { \
-    if ([SCIUtils getBoolPref:@"like_confirm"]) { \
-        [SCIUtils showConfirmation:^(void) { orig; }]; \
-    } else { \
-        orig; \
-    } \
-} while(0)
-
-
-#define CONFIRMREELSLIKE(orig) \
-do { \
-    if ([SCIUtils getBoolPref:@"like_confirm_reels"]) { \
-        [SCIUtils showConfirmation:^(void) { orig; }]; \
-    } else { \
-        orig; \
-    } \
-} while(0)
-
-
 
 %hook IGUFIButtonBarView
 
 - (void)_onLikeButtonPressed:(id)arg1 {
-    CONFIRMPOSTLIKE(%orig);
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 - (void)_onLikeButtonPressed {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 %end
@@ -105,11 +109,17 @@ do { \
 %hook IGFeedPhotoView
 
 - (void)_onDoubleTap:(id)arg1 {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 - (void)_onDoubleTap {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 %end
@@ -119,7 +129,10 @@ do { \
 %hook IGVideoPlayerOverlayContainerView
 
 - (void)_handleDoubleTapGesture:(id)arg1 {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 %end
@@ -129,11 +142,17 @@ do { \
 %hook IGSundialViewerVideoCell
 
 - (void)controlsOverlayControllerDidTapLikeButton:(id)arg1 {
-    CONFIRMREELSLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm_reels"], ^{
+        %orig;
+    });
 }
 
 - (void)gestureController:(id)arg1 didObserveDoubleTap:(id)arg2 {
-    CONFIRMREELSLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm_reels"], ^{
+        %orig;
+    });
 }
 
 %end
@@ -143,15 +162,24 @@ do { \
 %hook IGSundialViewerPhotoCell
 
 - (void)controlsOverlayControllerDidTapLikeButton:(id)arg1 {
-    CONFIRMREELSLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm_reels"], ^{
+        %orig;
+    });
 }
 
 - (void)gestureController:(id)arg1 didObserveDoubleTap:(id)arg2 {
-    CONFIRMREELSLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm_reels"], ^{
+        %orig;
+    });
 }
 
 - (void)swift_photoCell:(id)arg1 didObserveDoubleTapWithLocationInfo:(id)arg2 gestureRecognizer:(id)arg3 {
-    CONFIRMREELSLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm_reels"], ^{
+        %orig;
+    });
 }
 
 %end
@@ -161,15 +189,24 @@ do { \
 %hook IGSundialViewerCarouselCell
 
 - (void)controlsOverlayControllerDidTapLikeButton:(id)arg1 {
-    CONFIRMREELSLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm_reels"], ^{
+        %orig;
+    });
 }
 
 - (void)gestureController:(id)arg1 didObserveDoubleTap:(id)arg2 {
-    CONFIRMREELSLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm_reels"], ^{
+        %orig;
+    });
 }
 
 - (void)carouselCell:(id)arg1 didObserveDoubleTapWithLocationInfo:(id)arg2 gestureRecognizer:(id)arg3 {
-    CONFIRMREELSLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm_reels"], ^{
+        %orig;
+    });
 }
 
 %end
@@ -179,23 +216,38 @@ do { \
 %hook IGCommentCellController
 
 - (void)commentCell:(id)arg1 didTapLikeButton:(id)arg2 {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 - (void)commentCell:(id)arg1 didTapLikedByButtonForUser:(id)arg2 {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 - (void)commentCellDidLongPressOnLikeButton:(id)arg1 {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 - (void)commentCellDidEndLongPressOnLikeButton:(id)arg1 {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 - (void)commentCellDidDoubleTap:(id)arg1 {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 %end
@@ -205,7 +257,10 @@ do { \
 %hook IGFeedItemPreviewCommentCell
 
 - (void)_didTapLikeButton {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 %end
@@ -215,7 +270,10 @@ do { \
 %hook IGDirectThreadViewController
 
 - (void)_didTapLikeButton {
-    CONFIRMPOSTLIKE(%orig);
+
+    sciConfirmAction([SCIUtils getBoolPref:@"like_confirm"], ^{
+        %orig;
+    });
 }
 
 %end

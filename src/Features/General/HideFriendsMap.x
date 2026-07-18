@@ -1,33 +1,68 @@
+// Hide Friends Map from Instagram Notes tray.
+
 #import "../../Utils.h"
 
-%hook IGDirectNotesTrayRowCell
-- (id)listAdapterObjects {
-    NSArray *originalObjs = %orig();
-    NSMutableArray *filteredObjs = [NSMutableArray arrayWithCapacity:[originalObjs count]];
 
-    for (id obj in originalObjs) {
+%hook IGDirectNotesTrayRowCell
+
+- (id)listAdapterObjects {
+
+    NSArray *originalObjects = %orig();
+
+    if (!originalObjects) {
+        return originalObjects;
+    }
+
+
+    NSMutableArray *filteredObjects =
+    [NSMutableArray arrayWithCapacity:originalObjects.count];
+
+
+    for (id object in originalObjects) {
+
         BOOL shouldHide = NO;
+
 
         if ([SCIUtils getBoolPref:@"hide_friends_map"]) {
 
-            if ([obj isKindOfClass:%c(IGDirectNotesTrayUserViewModel)]) {
 
-                if ([[obj valueForKey:@"notePk"] isEqualToString:@"friends_map"]) {
+            Class viewModelClass =
+            NSClassFromString(@"IGDirectNotesTrayUserViewModel");
+
+
+            if (viewModelClass &&
+                [object isKindOfClass:viewModelClass]) {
+
+
+                NSString *notePk = nil;
+
+
+                @try {
+                    notePk = [object valueForKey:@"notePk"];
+                }
+                @catch (__unused id exception) {
+
+                }
+
+
+                if ([notePk isKindOfString:@"friends_map"]) {
+
                     NSLog(@"[SCInsta] Hiding friends map");
 
                     shouldHide = YES;
                 }
-
             }
-            
         }
 
-        // Populate new objs array
+
+
         if (!shouldHide) {
-            [filteredObjs addObject:obj];
+            [filteredObjects addObject:object];
         }
     }
 
-    return [filteredObjs copy];
+
+    return [filteredObjects copy];
 }
+
 %end

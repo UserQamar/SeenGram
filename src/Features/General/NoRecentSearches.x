@@ -3,42 +3,62 @@
 
 // Disable logging of searches at server-side
 %hook IGSearchEntityRouter
-- (id)initWithUserSession:(id)arg1 analyticsModule:(id)arg2 shouldAddToRecents:(BOOL)shouldAddToRecents {
+
+- (id)initWithUserSession:(id)arg1
+          analyticsModule:(id)arg2
+   shouldAddToRecents:(BOOL)shouldAddToRecents {
+
     if ([SCIUtils getBoolPref:@"no_recent_searches"]) {
         NSLog(@"[SCInsta] Disabling recent searches");
 
-        shouldAddToRecents = false;
+        shouldAddToRecents = NO;
     }
-    
+
     return %orig(arg1, arg2, shouldAddToRecents);
 }
+
 %end
+
 
 // Most in-app search bars
 %hook IGRecentSearchStore
-- (id)initWithDiskManager:(id)arg1 recentSearchStoreConfiguration:(id)arg2 {
+
+- (id)initWithDiskManager:(id)arg1
+recentSearchStoreConfiguration:(id)arg2 {
+
     if ([SCIUtils getBoolPref:@"no_recent_searches"]) {
         NSLog(@"[SCInsta] Disabling recent searches");
 
         return nil;
     }
 
-    return %orig;
+    return %orig(arg1, arg2);
 }
+
+
 - (BOOL)addItem:(id)arg1 {
+
     if ([SCIUtils getBoolPref:@"no_recent_searches"]) {
         NSLog(@"[SCInsta] Disabling recent searches");
 
-        return nil;
+        return NO;
     }
 
-    return %orig;
+    return %orig(arg1);
 }
+
 %end
 
-// Recent dm message recipients search bar
+
+// Recent DM message recipients search bar
 %hook IGDirectRecipientRecentSearchStorage
-- (id)initWithDiskManager:(id)arg1 directRepo:(id)arg2 userMap:(id)arg3 currentUser:(id)arg4 launcherSet:(id)arg5 {
+
+- (id)initWithDiskManager:(id)arg1
+               directRepo:(id)arg2
+                  userMap:(id)arg3
+             currentUser:(id)arg4
+              launcherSet:(id)arg5 {
+
     if ([SCIUtils getBoolPref:@"no_recent_searches"]) {
         NSLog(@"[SCInsta] Disabling recent searches");
 
@@ -47,4 +67,5 @@
 
     return %orig(arg1, arg2, arg3, arg4, arg5);
 }
+
 %end

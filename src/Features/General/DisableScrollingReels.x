@@ -2,35 +2,41 @@
 #import "../../InstagramHeaders.h"
 
 %hook IGUnifiedVideoCollectionView
+
 - (void)didMoveToWindow {
     %orig;
 
     if ([SCIUtils getBoolPref:@"disable_scrolling_reels"]) {
         NSLog(@"[SCInsta] Disabling scrolling reels");
-        
-        self.scrollEnabled = false;
+
+        self.scrollEnabled = NO;
     }
 }
 
 - (void)setScrollEnabled:(BOOL)arg1 {
     if ([SCIUtils getBoolPref:@"disable_scrolling_reels"]) {
         NSLog(@"[SCInsta] Disabling scrolling reels");
-        
-        return %orig(NO);
+
+        %orig(NO);
+        return;
     }
 
-    return %orig;
+    %orig(arg1);
 }
+
 %end
+
 
 // Disable auto-scrolling reels
 %hook _TtC19IGSundialAutoScroll19IGSundialAutoScroll
+
 - (void)setIsEnabled:(BOOL)enabled {
     if ([SCIUtils getBoolPref:@"disable_scrolling_reels"]) {
         %orig(NO);
+        return;
     }
-    else {
-        %orig(enabled);
-    }
+
+    %orig(enabled);
 }
+
 %end

@@ -1,28 +1,45 @@
+#import "../../InstagramHeaders.h"
 #import "../../Utils.h"
 
 %hook IGDirectDisappearingModeSwipeHandler
+
 - (void)handleBottomSwipeableScrollUpdate {
-    if ([SCIUtils getBoolPref:@"disable_disappearing_mode_swipe"]) return;
-    if ([SCIUtils getBoolPref:@"shh_mode_confirm"])
-        [SCIUtils showConfirmation:^(void) { %orig; }];
-    else %orig;
+
+    if ([SCIUtils getBoolPref:@"shh_confirm"]) {
+
+        NSLog(@"[SCInsta] Confirm disappearing mode swipe triggered");
+
+        [SCIUtils showConfirmation:^{
+            %orig;
+        }];
+
+    } else {
+
+        %orig;
+
+    }
 }
+
+
 - (id)getSwipeableScrollHintTextInfo {
-    if ([SCIUtils getBoolPref:@"disable_disappearing_mode_swipe"]) return nil;
-    return %orig;
-}
-%end
 
-%hook IGDirectThreadViewController
-- (void)messageListViewControllerDidToggleShhMode:(id)arg1 {
-    if ([SCIUtils getBoolPref:@"shh_mode_confirm"])
-        [SCIUtils showConfirmation:^(void) { %orig; }];
-    else %orig;
+    if ([SCIUtils getBoolPref:@"shh_confirm"]) {
+
+        NSLog(@"[SCInsta] Confirm disappearing mode hint triggered");
+
+        __block id result = nil;
+
+        [SCIUtils showConfirmation:^{
+            result = %orig;
+        }];
+
+        return result;
+
+    } else {
+
+        return %orig;
+
+    }
 }
 
-- (void)messageListViewControllerDidReplayInShhMode:(id)arg1 {
-    if ([SCIUtils getBoolPref:@"shh_mode_confirm"])
-        [SCIUtils showConfirmation:^(void) { %orig; }];
-    else %orig;
-}
 %end

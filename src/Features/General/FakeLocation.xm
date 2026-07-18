@@ -1,4 +1,3 @@
-```objc
 // Fake location — overrides CLLocationManager so any IG location read returns our coord.
 
 #import "../../Utils.h"
